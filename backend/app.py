@@ -2,10 +2,10 @@ import os
 import shutil
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from smell_detector import traverse_directory  # Import your smell detection logic
+from smell_detector import traverse_directory  # Import smell detection logic
 
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing (for React frontend)
+CORS(app)
 
 UPLOAD_FOLDER = 'uploaded_projects'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -27,23 +27,25 @@ def upload_project():
     zip_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(zip_path)
 
-    # Extract the zip
+    # Extract the zip to a project-specific folder
     project_folder = os.path.join(app.config['UPLOAD_FOLDER'], file.filename.replace('.zip', ''))
     shutil.unpack_archive(zip_path, project_folder)
-    os.remove(zip_path)
+    os.remove(zip_path)  # Clean up the zip file
 
-    # Detect smells in the extracted folder
+    # Analyze smells in the extracted project folder
     detected_smells = traverse_directory(project_folder)
 
-    # Summarize results
+    # Summarize the results
     smells_summary = {}
     total_smells = 0
-    for _, smells in detected_smells.items():
-        total_smells += len(smells)
-        for smell in smells:
-            smells_summary[smell] = smells_summary.get(smell, 0) + 1
+    for file_path, smells in detected_smells.items():
+        for smell_type, lines in smells.items():
+            if smell_type not in smells_summary:
+                smells_summary[smell_type] = []
+            smells_summary[smell_type].append({"file": file_path, "lines": lines})
+            total_smells += len(lines)
 
-    # Return analysis to frontend
+    # Return the analysis results
     return jsonify({
         "total_smells": total_smells,
         "smell_breakdown": smells_summary

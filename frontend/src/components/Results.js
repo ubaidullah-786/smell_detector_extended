@@ -1,5 +1,5 @@
 import React from "react";
-import { Chart, ArcElement, Tooltip } from "chart.js"; // Removed Legend since we're not using Chart.js's default legend
+import { Chart, ArcElement, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
 
 // Register Chart.js elements
@@ -12,13 +12,13 @@ const Results = ({ results }) => {
     typeof results.total_smells !== "number"
   ) {
     return (
-      <div style={{ marginTop: "40px", marginRight: "30px", fontSize: "18px" }}>
+      <div style={{ marginTop: "40px", marginRight: "18px", fontSize: "18px" }}>
         No Results Yet
       </div>
     );
   }
 
-  // Smell types and corresponding colors
+  // Smell types and colors
   const smellTypes = [
     { name: "Large Class", color: "#ff6384" },
     { name: "Long Parameter List", color: "#36a2eb" },
@@ -28,21 +28,20 @@ const Results = ({ results }) => {
     { name: "Long Lambda Function", color: "#8a2be2" },
   ];
 
-  // Extract raw counts
   const breakdown = results.smell_breakdown;
 
-  // Calculate percentages
+  // Calculate Pie chart percentages
   const percentages = smellTypes.map((type) => {
-    const count = breakdown[type.name] || 0; // Default to 0 if missing
-    return ((count / results.total_smells) * 100).toFixed(1); // Percentage with 1 decimal place
+    const count = breakdown[type.name]?.length || 0; 
+    return ((count / results.total_smells) * 100).toFixed(1);
   });
 
-  // Prepare Pie chart data
+  // Prepare data for Pie chart
   const data = {
     labels: smellTypes.map((type) => type.name),
     datasets: [
       {
-        data: percentages.map((p) => parseFloat(p)), // Convert percentages to numbers
+        data: percentages.map((p) => parseFloat(p)),
         backgroundColor: smellTypes.map((type) => type.color),
       },
     ],
@@ -51,6 +50,7 @@ const Results = ({ results }) => {
   return (
     <div>
       <h3>Total Smells Detected: {results.total_smells}</h3>
+
       {/* Custom Legend */}
       <div
         style={{
@@ -60,7 +60,7 @@ const Results = ({ results }) => {
           marginBottom: "20px",
         }}
       >
-        {smellTypes.map((type, index) => (
+        {smellTypes.map((type) => (
           <div
             key={type.name}
             style={{
@@ -79,11 +79,12 @@ const Results = ({ results }) => {
               }}
             ></div>
             <span>
-              {type.name}: {breakdown[type.name] || 0}
+              {type.name}: {breakdown[type.name]?.length || 0}
             </span>
           </div>
         ))}
       </div>
+
       {/* Pie Chart */}
       <div style={{ maxWidth: "300px", margin: "0 auto" }}>
         <Pie
@@ -91,11 +92,10 @@ const Results = ({ results }) => {
           options={{
             plugins: {
               legend: {
-                display: false, // Disable the default Pie chart legend
+                display: false,
               },
               tooltip: {
                 callbacks: {
-                  // Tooltip shows percentage with 1 decimal place
                   label: (tooltipItem) => {
                     const label = tooltipItem.label || "";
                     const value = tooltipItem.raw || 0;
@@ -107,6 +107,44 @@ const Results = ({ results }) => {
           }}
         />
       </div>
+
+      {/* Table for detailed results */}
+      <table
+        style={{
+          borderCollapse: "collapse",
+          width: "100%",
+          margin: "20px 0",
+        }}
+      >
+        <thead>
+          <tr style={{ backgroundColor: "#f2f2f2", textAlign: "center" }}>
+            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+              Smell Type
+            </th>
+            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+              File Path
+            </th>
+            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Lines</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(breakdown).flatMap(([smellType, items]) =>
+            items.map(({ file, lines }) => (
+              <tr key={`${file}-${lines.join(",")}`}>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  {smellType}
+                </td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  {file}
+                </td>
+                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                  {lines.join(", ")}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -54,28 +54,27 @@ def detect_long_lambda_function(node):
     return None
 
 def analyze_code(file_path):
+    # Add a dictionary to store smells with line numbers
+    results = {}
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             code = file.read()
-    except UnicodeDecodeError as e:
-        print(f"Encoding error in file: {file_path} - {e}")
-        return []
-    try:
         tree = ast.parse(code)
-    except SyntaxError as e:
-        print(f"Syntax error in file: {file_path} - {e}")
-        return []
-    smells = []
+    except (UnicodeDecodeError, SyntaxError):
+        return {}
+
     for node in ast.walk(tree):
-        smells += filter(None, [
-            detect_large_class(node),
-            detect_long_parameter_list(node),
-            detect_long_method(node),
-            detect_long_message_chain(node),
-            detect_long_base_class_list(node),
-            detect_long_lambda_function(node),
-        ])
-    return smells
+        smell = detect_large_class(node)
+        if smell:
+            results.setdefault(smell, []).append(node.lineno)
+        # Repeat the same for each smell detector
+        for detector in [detect_long_parameter_list, detect_long_method, 
+                          detect_long_message_chain, detect_long_base_class_list, 
+                          detect_long_lambda_function]:
+            smell = detector(node)
+            if smell:
+                results.setdefault(smell, []).append(node.lineno)
+    return results
 
 def traverse_directory(root_folder):
     detected_smells = {}
@@ -87,6 +86,7 @@ def traverse_directory(root_folder):
                 if smells:
                     detected_smells[file_path] = smells
     return detected_smells
+
 
 # Flask API to handle uploads
 @app.route('/upload', methods=['POST'])
