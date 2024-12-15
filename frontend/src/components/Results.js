@@ -24,8 +24,8 @@ const Results = ({ results }) => {
     { name: "Long Parameter List", color: "#36a2eb" },
     { name: "Long Method", color: "#cc65fe" },
     { name: "Long Message Chain", color: "#ffce56" },
-    { name: "Long Base Class List", color: "#7cfc00" },
-    { name: "Long Lambda Function", color: "#8a2be2" },
+    { name: "Long Base Class List", color: "#ba4a00 " },
+    { name: "Long Lambda Function", color: "#35cbac" },
   ];
 
   const breakdown = results.smell_breakdown;
@@ -86,7 +86,7 @@ const Results = ({ results }) => {
       </div>
 
       {/* Pie Chart */}
-      <div style={{ maxWidth: "300px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "310px", margin: "0 auto" }}>
         <Pie
           data={data}
           options={{
@@ -124,7 +124,7 @@ const Results = ({ results }) => {
             <th style={{ padding: "8px", border: "1px solid #ddd" }}>
               File Path
             </th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Lines</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Line Numbers</th>
           </tr>
         </thead>
         <tbody>

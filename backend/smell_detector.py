@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Code smell detection functions (unchanged)
+# Code smell detection functions
 def detect_large_class(node):
     if isinstance(node, ast.ClassDef):
         loc = len(node.body)
