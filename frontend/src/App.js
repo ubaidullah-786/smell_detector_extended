@@ -6,8 +6,14 @@ const App = () => {
   const [results, setResults] = useState(null);
 
   return (
-    <div>
-      <h1>Python Code Smell Detector</h1>
+    <div
+      style={{
+        textAlign: "center",
+      }}
+    >
+      <h1 style={{ fontSize: "48px", marginTop: "10px", marginBottom: 0 }}>
+        Python Code Smell Detector
+      </h1>
       <UploadFile onResults={setResults} />
       <Results results={results} />
     </div>

@@ -6,8 +6,16 @@ import { Pie } from "react-chartjs-2";
 Chart.register(ArcElement, Tooltip);
 
 const Results = ({ results }) => {
-  if (!results || !results.smell_breakdown || typeof results.total_smells !== "number") {
-    return <div>No Results Yet</div>;
+  if (
+    !results ||
+    !results.smell_breakdown ||
+    typeof results.total_smells !== "number"
+  ) {
+    return (
+      <div style={{ marginTop: "40px", marginRight: "30px", fontSize: "18px" }}>
+        No Results Yet
+      </div>
+    );
   }
 
   // Smell types and corresponding colors
@@ -44,7 +52,14 @@ const Results = ({ results }) => {
     <div>
       <h3>Total Smells Detected: {results.total_smells}</h3>
       {/* Custom Legend */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginBottom: "20px",
+        }}
+      >
         {smellTypes.map((type, index) => (
           <div
             key={type.name}
@@ -70,7 +85,7 @@ const Results = ({ results }) => {
         ))}
       </div>
       {/* Pie Chart */}
-      <div style={{ maxWidth: "400px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "300px", margin: "0 auto" }}>
         <Pie
           data={data}
           options={{
