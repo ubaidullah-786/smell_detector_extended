@@ -21,22 +21,29 @@ const Results = ({ results }) => {
   // Smell types and colors
   const smellTypes = [
     { name: "Large Class", color: "#ff6384" },
-    { name: "Long Parameter List", color: "#36a2eb" },
+    { name: "Long Parameter List", color: "#00b4d8" },
     { name: "Long Method", color: "#cc65fe" },
     { name: "Long Message Chain", color: "#ffce56" },
-    { name: "Long Base Class List", color: "#660f56 " },
+    { name: "Long Base Class List", color: "#660f56" },
     { name: "Long Lambda Function", color: "#35cbac" },
-    { name: "Long Element Chain", color: "#34495e " },
+    { name: "Long Element Chain", color: "#34495e" },
     { name: "Long Ternary Conditional Expression", color: "#ab4646" },
   ];
 
   const breakdown = results.smell_breakdown;
 
-  // Get counts for each smell type
-  const counts = smellTypes.map((type) => breakdown[type.name]?.length || 0);
+  // Get counts for each smell type by summing all line occurrences
+  const counts = smellTypes.map((type) => {
+    return (
+      breakdown[type.name]?.reduce(
+        (acc, item) => acc + (item.lines ? item.lines.length : 0),
+        0
+      ) || 0
+    );
+  });
 
   // Calculate percentages proportional to counts
-  const totalSmells = counts.reduce((sum, count) => sum + count, 0);
+  const totalSmells = results.total_smells;
   const percentages = counts.map((count) =>
     totalSmells > 0 ? ((count / totalSmells) * 100).toFixed(1) : 0
   );
@@ -84,7 +91,7 @@ const Results = ({ results }) => {
               }}
             ></div>
             <span>
-              {type.name}: {breakdown[type.name]?.length || 0}
+              {type.name}: {counts[smellTypes.indexOf(type)]}
             </span>
           </div>
         ))}
