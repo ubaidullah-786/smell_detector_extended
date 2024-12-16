@@ -11,12 +11,7 @@ const UploadFile = ({ onResults }) => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      alert("Please select a file.");
-      return;
-    }
-
-    if (!selectedFile.name.endsWith(".zip")) {
-      alert("Please upload a .zip file.");
+      alert("Please select a file or folder.");
       return;
     }
 
@@ -70,7 +65,7 @@ const UploadFile = ({ onResults }) => {
           onChange={handleFileChange}
           style={{ display: "none" }}
         />
-        <span style={{ marginLeft: "10px", fontSize: '18px' }}>
+        <span style={{ marginLeft: "10px", fontSize: "18px" }}>
           {selectedFile ? selectedFile.name : "No file chosen"}
         </span>
       </div>

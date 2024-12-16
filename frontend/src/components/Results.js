@@ -24,17 +24,22 @@ const Results = ({ results }) => {
     { name: "Long Parameter List", color: "#36a2eb" },
     { name: "Long Method", color: "#cc65fe" },
     { name: "Long Message Chain", color: "#ffce56" },
-    { name: "Long Base Class List", color: "#ba4a00 " },
+    { name: "Long Base Class List", color: "#660f56 " },
     { name: "Long Lambda Function", color: "#35cbac" },
+    { name: "Long Element Chain", color: "#34495e " },
+    { name: "Long Ternary Conditional Expression", color: "#ab4646" },
   ];
 
   const breakdown = results.smell_breakdown;
 
-  // Calculate Pie chart percentages
-  const percentages = smellTypes.map((type) => {
-    const count = breakdown[type.name]?.length || 0; 
-    return ((count / results.total_smells) * 100).toFixed(1);
-  });
+  // Get counts for each smell type
+  const counts = smellTypes.map((type) => breakdown[type.name]?.length || 0);
+
+  // Calculate percentages proportional to counts
+  const totalSmells = counts.reduce((sum, count) => sum + count, 0);
+  const percentages = counts.map((count) =>
+    totalSmells > 0 ? ((count / totalSmells) * 100).toFixed(1) : 0
+  );
 
   // Prepare data for Pie chart
   const data = {
@@ -86,7 +91,7 @@ const Results = ({ results }) => {
       </div>
 
       {/* Pie Chart */}
-      <div style={{ maxWidth: "310px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "280px", margin: "0 auto" }}>
         <Pie
           data={data}
           options={{
@@ -124,7 +129,9 @@ const Results = ({ results }) => {
             <th style={{ padding: "8px", border: "1px solid #ddd" }}>
               File Path
             </th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Line Numbers</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
+              Line Numbers
+            </th>
           </tr>
         </thead>
         <tbody>
