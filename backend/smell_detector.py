@@ -1,8 +1,6 @@
 import ast
 import os
-import zipfile
-import tempfile
-from flask import Flask, request, jsonify
+from flask import Flask
 
 app = Flask(__name__)
 
@@ -75,8 +73,8 @@ def analyze_code(file_path):
     results = {}  # Dictionary to store smells and their line numbers
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
-            code = file.read()
-        tree = ast.parse(code)
+            file_content = file.readlines()  # Read entire file content
+        tree = ast.parse("".join(file_content))
     except (UnicodeDecodeError, SyntaxError):
         return {}  # Return empty results if the file can't be parsed
 
@@ -95,7 +93,10 @@ def analyze_code(file_path):
         for detector in detectors:
             smell = detector(node)
             if smell:
-                results.setdefault(smell, []).append(node.lineno)
+                if smell not in results:
+                    results[smell] = {"lines": [], "file_content": file_content}
+                results[smell]["lines"].append(node.lineno)
+
     return results
 
 def traverse_directory(root_folder):
