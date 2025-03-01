@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chart, ArcElement, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import "react-multi-carousel/lib/styles.css";
 
 // Register Chart.js elements
 Chart.register(ArcElement, Tooltip);
 
 const Results = ({ results }) => {
+  const [expanded, setExpanded] = useState(null);
+
   if (
     !results ||
     !results.smell_breakdown ||
@@ -18,7 +28,6 @@ const Results = ({ results }) => {
     );
   }
 
-  // Smell types and colors
   const smellTypes = [
     { name: "Large Class", color: "#ff6384" },
     { name: "Long Parameter List", color: "#00b4d8" },
@@ -30,9 +39,8 @@ const Results = ({ results }) => {
     { name: "Long Ternary Conditional Expression", color: "#ab4646" },
   ];
 
-  const breakdown = results.smell_breakdown;
+  const breakdown = results.smell_breakdown || {};
 
-  // Get counts for each smell type by summing all line occurrences
   const counts = smellTypes.map((type) => {
     return (
       breakdown[type.name]?.reduce(
@@ -42,13 +50,11 @@ const Results = ({ results }) => {
     );
   });
 
-  // Calculate percentages proportional to counts
   const totalSmells = results.total_smells;
   const percentages = counts.map((count) =>
     totalSmells > 0 ? ((count / totalSmells) * 100).toFixed(1) : 0
   );
 
-  // Prepare data for Pie chart
   const data = {
     labels: smellTypes.map((type) => type.name),
     datasets: [
@@ -59,11 +65,14 @@ const Results = ({ results }) => {
     ],
   };
 
+  const handleExpand = (panel) => () => {
+    setExpanded(expanded === panel ? null : panel);
+  };
+
   return (
     <div>
       <h3>Total Smells Detected: {results.total_smells}</h3>
 
-      {/* Custom Legend */}
       <div
         style={{
           display: "flex",
@@ -97,7 +106,6 @@ const Results = ({ results }) => {
         ))}
       </div>
 
-      {/* Pie Chart */}
       <div style={{ maxWidth: "280px", margin: "0 auto" }}>
         <Pie
           data={data}
@@ -120,45 +128,50 @@ const Results = ({ results }) => {
         />
       </div>
 
-      {/* Table for detailed results */}
-      <table
-        style={{
-          borderCollapse: "collapse",
-          width: "100%",
-          margin: "20px 0",
-        }}
-      >
-        <thead>
-          <tr style={{ backgroundColor: "#f2f2f2", textAlign: "center" }}>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
-              Smell Type
-            </th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
-              File Path
-            </th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>
-              Line Numbers
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(breakdown).flatMap(([smellType, items]) =>
-            items.map(({ file, lines }) => (
-              <tr key={`${file}-${lines.join(",")}`}>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                  {smellType}
-                </td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                  {file}
-                </td>
-                <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                  {lines.join(", ")}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      {Object.entries(breakdown).map(([smellType, items]) => (
+        <Accordion
+          key={smellType}
+          expanded={expanded === smellType}
+          onChange={handleExpand(smellType)}
+          style={{ marginBottom: "20px" }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">{smellType}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {items.map(({ file, lines, file_content }) => (
+              <div key={file} style={{ fontFamily: "monospace" }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {file} | Line Numbers: {lines.join(", ")}
+                </Typography>
+
+                <pre
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    overflowX: "auto",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {file_content &&
+                    file_content.map((lineText, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          color: lines.includes(index + 1) ? "red" : "black",
+                          textAlign: "start",
+                        }}
+                      >
+                        {index + 1}: {lineText}
+                      </div>
+                    ))}
+                </pre>
+              </div>
+            ))}
+          </AccordionDetails>
+        </Accordion>
+      ))}
     </div>
   );
 };
