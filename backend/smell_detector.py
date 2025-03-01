@@ -44,13 +44,6 @@ def detect_long_base_class_list(node):
             return "Long Base Class List"
     return None
 
-def detect_long_lambda_function(node):
-    if isinstance(node, ast.Lambda):
-        lambda_chars = len(ast.dump(node))  # Character count in lambda
-        if lambda_chars >= 80:
-            return "Long Lambda Function"
-    return None
-
 def detect_long_element_chain(node):
     if isinstance(node, ast.Call):
         chain_length = 0
@@ -60,13 +53,6 @@ def detect_long_element_chain(node):
             current = current.value
         if chain_length >= 3:
             return "Long Element Chain"
-    return None
-
-def detect_long_ternary_conditional_expression(node):
-    if isinstance(node, ast.IfExp):  # Matches ternary expression (a if cond else b)
-        expr_length = len(ast.dump(node))  # Character count in the expression
-        if expr_length >= 40:
-            return "Long Ternary Conditional Expression"
     return None
 
 def analyze_code(file_path):
@@ -84,9 +70,7 @@ def analyze_code(file_path):
         detect_long_method,
         detect_long_message_chain,
         detect_long_base_class_list,
-        detect_long_lambda_function,
         detect_long_element_chain,
-        detect_long_ternary_conditional_expression,
     ]
 
     for node in ast.walk(tree):

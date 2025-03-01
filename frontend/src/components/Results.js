@@ -33,10 +33,8 @@ const Results = ({ results }) => {
     { name: "Long Parameter List", color: "#00b4d8" },
     { name: "Long Method", color: "#cc65fe" },
     { name: "Long Message Chain", color: "#ffce56" },
-    { name: "Long Base Class List", color: "#660f56" },
-    { name: "Long Lambda Function", color: "#35cbac" },
+    { name: "Long Base Class List", color: "#35cbac" },
     { name: "Long Element Chain", color: "#34495e" },
-    { name: "Long Ternary Conditional Expression", color: "#ab4646" },
   ];
 
   const breakdown = results.smell_breakdown || {};

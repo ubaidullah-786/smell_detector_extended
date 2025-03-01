@@ -1,10 +1,7 @@
-react: 19.0.0
-react-chartjs-2: 5.2.0
-chart.js: 4.4.7
-web-vitals: 4.2.4
-flask: 0.2.10
-flask-cors: 0.0.1
-matplotlib: 1.0.0
-axios: 1.7.9
-
-react@18 react-dom@18 in case react-chartjs-2 is not compatible with react@19
+npm install:
+react-scripts
+react-multi-carousel
+@mui/material
+@mui/icons-material
+@emotion/react
+@emotion/styled
