@@ -142,7 +142,7 @@ const Results = ({ results }) => {
             {items.map(({ file, lines, file_content }) => (
               <div key={file} style={{ fontFamily: "monospace" }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {file} | Line Numbers: {lines.join(", ")}
+                  File Path: {file} <br/> Line Number(s): {lines.join(", ")}
                 </Typography>
 
                 <pre

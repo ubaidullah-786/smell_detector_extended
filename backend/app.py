@@ -49,11 +49,15 @@ def upload_project():
     smells_summary = {}
     total_smells = 0
     for file_path, smells in detected_smells.items():
-        for smell_type, lines in smells.items():
+        for smell_type, data in smells.items():
             if smell_type not in smells_summary:
                 smells_summary[smell_type] = []
-            smells_summary[smell_type].append({"file": file_path, "lines": lines})
-            total_smells += len(lines)
+            smells_summary[smell_type].append({
+                "file": file_path,
+                "lines": data["lines"],
+                "file_content": data["file_content"]  # Include full file content
+            })
+            total_smells += len(data["lines"])
 
     # Clean up the folder after analysis
     shutil.rmtree(project_folder)
