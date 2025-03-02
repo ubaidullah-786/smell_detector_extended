@@ -104,7 +104,9 @@ const Results = ({ results }) => {
         ))}
       </div>
 
-      <div style={{ maxWidth: "280px", margin: "0 auto" }}>
+      <div
+        style={{ maxWidth: "280px", margin: "0 auto", marginBottom: "2.1rem" }}
+      >
         <Pie
           data={data}
           options={{
@@ -140,7 +142,7 @@ const Results = ({ results }) => {
             {items.map(({ file, lines, file_content }) => (
               <div key={file} style={{ fontFamily: "monospace" }}>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  File Path: {file} <br/> Line Number(s): {lines.join(", ")}
+                  File Path: {file} <br /> Line Number(s): {lines.join(", ")}
                 </Typography>
 
                 <pre
