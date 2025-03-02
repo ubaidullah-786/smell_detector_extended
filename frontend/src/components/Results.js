@@ -139,7 +139,7 @@ const Results = ({ results }) => {
             <Typography variant="h6">{smellType}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {items.map(({ file, lines, file_content }) => (
+            {items.map(({ file, lines, file_content, range }) => (
               <div key={file} style={{ fontFamily: "monospace" }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   File Path: {file} <br /> Line Number(s): {lines.join(", ")}
@@ -159,7 +159,10 @@ const Results = ({ results }) => {
                       <div
                         key={index}
                         style={{
-                          color: lines.includes(index + 1) ? "red" : "black",
+                          color:
+                            range && index + 1 >= range.start && index + 1 <= range.end
+                              ? "red"
+                              : "black",
                           textAlign: "start",
                         }}
                       >
