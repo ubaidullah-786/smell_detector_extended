@@ -155,20 +155,26 @@ const Results = ({ results }) => {
                   }}
                 >
                   {file_content &&
-                    file_content.map((lineText, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          color:
-                            range && index + 1 >= range.start && index + 1 <= range.end
-                              ? "red"
-                              : "black",
-                          textAlign: "start",
-                        }}
-                      >
-                        {index + 1}: {lineText}
-                      </div>
-                    ))}
+                    file_content.map((lineText, index) => {
+                      const lineNumber = index + 1;
+                      const isHighlighted =
+                        (range &&
+                          lineNumber >= range.start &&
+                          lineNumber <= range.end) || // For range-based highlighting
+                        (lines && lines.includes(lineNumber)); // For single-line highlighting
+
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            color: isHighlighted ? "red" : "black",
+                            textAlign: "start",
+                          }}
+                        >
+                          {lineNumber}: {lineText}
+                        </div>
+                      );
+                    })}
                 </pre>
               </div>
             ))}
